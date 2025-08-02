@@ -1,9 +1,12 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, ScrollView, StatusBar, Animated } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, ScrollView, StatusBar, Animated, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ComingSoonDialog from './ComingSoonDialog';
+import Index from '../app/index';
+import Progress from './Progress';
+import ShowAllStats from './ShowAllStats';
 import { ANIMATION_DURATION } from '../utils/constants';
 
 const PROFILE_DATA = {
@@ -181,10 +184,30 @@ function ProfileContent({ onBackPress }: { onBackPress: () => void }) {
 
 export default function BottomNavigation() {
   const [activeTab, setActiveTab] = useState('Home');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showAllStats, setShowAllStats] = useState(false);
 
   const handleTabChange = useCallback((tabId: string) => {
     if (activeTab === tabId) return;
-    setActiveTab(tabId);
+    
+    setIsLoading(true);
+    setLoadingProgress(0);
+    
+    const progressInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          setIsLoading(false);
+          return 100;
+        }
+        return prev + 25;
+      });
+    }, 40);
+    
+    setTimeout(() => {
+      setActiveTab(tabId);
+    }, 80);
   }, [activeTab]);
 
   const renderIcon = useCallback((item: any, isActive: boolean) => {
@@ -198,31 +221,53 @@ export default function BottomNavigation() {
   }, []);
 
   const handleBackPress = useCallback(() => {
-    setActiveTab('Home');
+    if (showAllStats) {
+      setShowAllStats(false);
+    } else {
+      setActiveTab('Home');
+    }
+  }, [showAllStats]);
+
+  const handleShowAllStats = useCallback(() => {
+    setShowAllStats(true);
   }, []);
 
   const renderContent = useMemo(() => {
+    if (showAllStats) {
+      return <ShowAllStats onBack={() => setShowAllStats(false)} />;
+    }
+    
     switch (activeTab) {
       case 'Home':
-        return <View style={styles.content} />;
+        return <Index onShowAllStats={handleShowAllStats} />;
       case 'Gym':
       case 'Meditation':
         return <ComingSoonDialog />;
       case 'Progress':
-        return <View style={styles.content} />;
+        return <Progress />;
       case 'Profile':
         return <ProfileContent onBackPress={handleBackPress} />;
       default:
         return <View style={styles.content} />;
     }
-  }, [activeTab, handleBackPress]);
+  }, [activeTab, handleBackPress, showAllStats, handleShowAllStats]);
 
-  if (activeTab === 'Profile') {
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <StatusBar barStyle="dark-content" backgroundColor="#EBF8FF" />
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
+  if (activeTab === 'Profile' || showAllStats) {
     return renderContent;
   }
 
   return (
     <View style={styles.fullScreen}>
+      {activeTab !== 'Home' && <StatusBar barStyle="dark-content" backgroundColor="#EBF8FF" />}
       <View style={styles.content}>
         {renderContent}
       </View>
@@ -279,10 +324,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
   },
   navItem: {
     flex: 1,
@@ -303,9 +350,11 @@ const styles = StyleSheet.create({
   activeNavLabel: {
     color: '#007AFF',
   },
-  content: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#EBF8FF',
   },
 });
 

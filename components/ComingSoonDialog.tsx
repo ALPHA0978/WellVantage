@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { COLORS } from '../utils/constants';
 
 function ComingSoonDialog() {
 
@@ -8,13 +9,13 @@ function ComingSoonDialog() {
     <View style={styles.overlay}>
       <View style={styles.dialog}>
         <View style={styles.header}>
-          <MaterialIcons name="info" size={20} color="#3B82F6" />
+          <MaterialIcons name="info" size={20} color={COLORS.primary} />
           <Text style={styles.headerText}>Coming Soon!</Text>
         </View>
 
         <View style={styles.iconContainer}>
           <View style={styles.circle}>
-            <MaterialIcons name="build" size={50} color="#3B82F6" />
+            <MaterialIcons name="build" size={50} color={COLORS.primary} />
           </View>
         </View>
 
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6B7280',
+    color: COLORS.textSecondary,
     marginLeft: 6,
   },
   iconContainer: {
@@ -72,10 +73,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#fff',
     borderWidth: 3,
-    borderColor: 'rgba(59, 130, 246, 0.5)',
+    borderColor: COLORS.primary + '80',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#3B82F6',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -87,13 +88,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#111827',
+    color: COLORS.text,
     marginBottom: 6,
     textAlign: 'center',
   },
   message: {
     fontSize: 14,
-    color: '#6B7280',
+    color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     maxWidth: 280,

@@ -1,14 +1,15 @@
 // App-wide constants
 export const COLORS = {
-  primary: '#007AFF',
-  secondary: '#6b7280',
+  primary: '#66C4FF', // Light Blue
+  secondary: '#7D99AA', // Gray Blue
+  accent: '#66F4FF', // Cyan
+  warning: '#FFC067', // Orange
   background: '#fff',
   surface: '#f9fafb',
   text: '#111827',
   textSecondary: '#6b7280',
   border: '#f3f4f6',
-  success: '#10b981',
-  warning: '#f59e0b',
+  success: '#66F4FF', // Using cyan for success
   error: '#ef4444',
 } as const;
 
