@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alpha12121.WELLVANTAGE",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,10 +25,8 @@
         "backgroundColor": "#ffffff",
         "barStyle": "dark-content"
       },
-      "navigationBar": {
-        "visible": "leanback",
-        "behavior": "overlay-swipe"
-      }
+      "softwareKeyboardLayoutMode": "pan",
+      "userInterfaceStyle": "automatic"
     },
     "web": {
       "bundler": "metro",
@@ -40,14 +42,6 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
-        }
-      ],
-      [
-        "expo-navigation-bar",
-        {
-          "position": "relative",
-          "visibility": "visible",
-          "behavior": "overlay-swipe"
         }
       ]
     ],
