@@ -1,16 +1,17 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, ScrollView, StatusBar, Animated, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import ComingSoonDialog from './ComingSoonDialog';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Index from '../app/index';
+import { ANIMATION_DURATION } from '../utils/constants';
+import ComingSoonDialog from './ComingSoonDialog';
+import MoodHistory from './MoodHistory';
 import Progress from './Progress';
 import ShowAllStats from './ShowAllStats';
-import { ANIMATION_DURATION } from '../utils/constants';
 
 const PROFILE_DATA = {
-  name: "Shane",
+  name: "Manish Raj",
   userId: "ID-192020072589",
   stats: [
     { id: 'height', label: 'Height (ft)', value: "5'7''", icon: 'straighten', color: '#FCD34D' },
@@ -101,7 +102,7 @@ function ProfileContent({ onBackPress }: { onBackPress: () => void }) {
           </View>
           <View style={profileStyles.profileSection}>
             <View style={profileStyles.avatar}>
-              <Text style={profileStyles.avatarText}>Shane</Text>
+              <Text style={profileStyles.avatarText}>MR</Text>
             </View>
             <Text style={profileStyles.name}>{PROFILE_DATA.name}</Text>
             <Text style={profileStyles.userId}>{PROFILE_DATA.userId}</Text>
@@ -187,6 +188,7 @@ export default function BottomNavigation() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [showAllStats, setShowAllStats] = useState(false);
+  const [showMoodHistory, setShowMoodHistory] = useState(false);
 
   const handleTabChange = useCallback((tabId: string) => {
     if (activeTab === tabId) return;
@@ -221,20 +223,30 @@ export default function BottomNavigation() {
   }, []);
 
   const handleBackPress = useCallback(() => {
-    if (showAllStats) {
+    if (showMoodHistory) {
+      setShowMoodHistory(false);
+    } else if (showAllStats) {
       setShowAllStats(false);
     } else {
       setActiveTab('Home');
     }
-  }, [showAllStats]);
+  }, [showAllStats, showMoodHistory]);
 
   const handleShowAllStats = useCallback(() => {
     setShowAllStats(true);
   }, []);
 
+  const handleNavigateToHistory = useCallback(() => {
+    setShowMoodHistory(true);
+  }, []);
+
   const renderContent = useMemo(() => {
+    if (showMoodHistory) {
+      return <MoodHistory onBack={() => setShowMoodHistory(false)} />;
+    }
+    
     if (showAllStats) {
-      return <ShowAllStats onBack={() => setShowAllStats(false)} />;
+      return <ShowAllStats onBack={() => setShowAllStats(false)} onNavigateToHistory={handleNavigateToHistory} />;
     }
     
     switch (activeTab) {
@@ -250,7 +262,7 @@ export default function BottomNavigation() {
       default:
         return <View style={styles.content} />;
     }
-  }, [activeTab, handleBackPress, showAllStats, handleShowAllStats]);
+  }, [activeTab, handleBackPress, showAllStats, showMoodHistory, handleShowAllStats, handleNavigateToHistory]);
 
   if (isLoading) {
     return (
@@ -261,7 +273,7 @@ export default function BottomNavigation() {
     );
   }
 
-  if (activeTab === 'Profile' || showAllStats) {
+  if (activeTab === 'Profile' || showAllStats || showMoodHistory) {
     return renderContent;
   }
 

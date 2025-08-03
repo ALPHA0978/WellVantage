@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,7 +9,7 @@ import { COLORS } from '../utils/constants';
 
 const screenWidth = Dimensions.get('window').width;
 
-export default function ShowAllStats({ onBack }: { onBack: () => void }) {
+export default function ShowAllStats({ onBack, onNavigateToHistory }: { onBack: () => void; onNavigateToHistory?: () => void }) {
   const [visibleLines, setVisibleLines] = useState({
     daily: true,
     meditation: true,
@@ -19,6 +20,28 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
     meditation: new Animated.Value(1),
     workout: new Animated.Value(1)
   });
+  const [moodData, setMoodData] = useState<any[]>([]);
+  const [meditationData, setMeditationData] = useState<any[]>([]);
+  const [workoutData, setWorkoutData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadAllMoodData = async () => {
+      try {
+        const [dailyData, meditationMoodData, workoutMoodData] = await Promise.all([
+          AsyncStorage.getItem('moodHistory'),
+          AsyncStorage.getItem('meditationMoodData'),
+          AsyncStorage.getItem('workoutMoodData')
+        ]);
+        
+        setMoodData(dailyData ? JSON.parse(dailyData) : []);
+        setMeditationData(meditationMoodData ? JSON.parse(meditationMoodData) : []);
+        setWorkoutData(workoutMoodData ? JSON.parse(workoutMoodData) : []);
+      } catch (error) {
+        console.log('Error loading mood data:', error);
+      }
+    };
+    loadAllMoodData();
+  }, []);
 
   const toggleLine = (lineType: 'daily' | 'meditation' | 'workout') => {
     const isVisible = visibleLines[lineType];
@@ -39,10 +62,34 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
 
   const getVisibleDatasets = () => {
     const datasets = [];
+    const today = new Date();
+    
+    // Get current week (Monday to Sunday)
+    const getWeekData = (dataSource: any[]) => {
+      const weekData = [];
+      const currentDate = new Date();
+      
+      // Get Monday of current week
+      const monday = new Date(currentDate);
+      const dayOfWeek = currentDate.getDay();
+      const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Sunday = 0, so 6 days from Monday
+      monday.setDate(currentDate.getDate() - daysFromMonday);
+      
+      // Get data for each day of the week (Mon-Sun)
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + i);
+       const dateStr = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+        const dayMood = dataSource.find(entry => entry.date === dateStr);
+        weekData.push(dayMood ? dayMood.mood : 4); // Default to neutral (4)
+      }
+      
+      return weekData;
+    };
     
     if (visibleLines.daily) {
       datasets.push({
-        data: [4, 3, 4, 5, 4, 3, 5],
+        data: getWeekData(moodData),
         color: () => COLORS.primary,
         strokeWidth: 3,
       });
@@ -50,7 +97,7 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
     
     if (visibleLines.meditation) {
       datasets.push({
-        data: [3, 4, 5, 4, 5, 4, 4],
+        data: getWeekData(meditationData),
         color: () => '#F59E0B',
         strokeWidth: 3,
       });
@@ -58,13 +105,23 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
     
     if (visibleLines.workout) {
       datasets.push({
-        data: [2, 3, 3, 4, 3, 4, 5],
+        data: getWeekData(workoutData),
         color: () => '#059669',
         strokeWidth: 3,
       });
     }
     
-    return datasets.length > 0 ? datasets : [{ data: [0, 1, 2, 3, 4, 5], color: () => 'transparent', strokeWidth: 0 }];
+    // Always add invisible data points to force full Y-axis range
+    if (datasets.length > 0) {
+      datasets.push({
+        data: [1, 6, 1, 6, 1, 6, 1], // Invisible points at min/max to force full range
+        color: () => 'transparent',
+        strokeWidth: 0,
+        withDots: false,
+      });
+    }
+    
+    return datasets.length > 0 ? datasets : [{ data: [1, 6, 1, 6, 1, 6, 1], color: () => 'transparent', strokeWidth: 0 }];
   };
   const monthlyData = [
     { month: "Jan", calories: 2400, workouts: 12 },
@@ -76,6 +133,12 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
   ];
 
   const maxCalories = Math.max(...monthlyData.map(m => m.calories));
+
+  const showMoodHistory = () => {
+    if (onNavigateToHistory) {
+      onNavigateToHistory();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,20 +158,23 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
         <View style={styles.emotionCard}>
           <Text style={styles.emotionTitle}>Daily Emotional Check-in</Text>
           
-          <LineChart
+          <TouchableOpacity onPress={showMoodHistory}>
+            <LineChart
             data={{
               labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
               datasets: getVisibleDatasets(),
             }}
-            width={screenWidth - 80}
+            width={screenWidth - 70}
             height={220}
             yAxisSuffix=""
             yAxisInterval={1}
-            fromZero={true}
+            fromZero={false}
             segments={5}
+            withInnerLines={true}
+            withOuterLines={true}
             formatYLabel={(value) => {
               const val = Math.round(parseFloat(value));
-              const emotions = ['Angry', 'Sad', 'Stressed', 'Neutral', 'Content', 'Happy'];
+              const emotions = { 1: 'Angry', 2: 'Sad', 3: 'Stressed', 4: 'Neutral', 5: 'Content', 6: 'Happy' };
               return emotions[val] || '';
             }}
             chartConfig={{
@@ -126,15 +192,18 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
                 strokeWidth: '2',
                 stroke: '#fff',
               },
+
             }}
             bezier
             style={{
               marginVertical: 8,
               borderRadius: 16,
             }}
-          />
-          
-          <View style={styles.emotionLegend}>
+            />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.emotionLegend}>
             <TouchableOpacity style={styles.legendItem} onPress={() => toggleLine('daily')}>
               <Animated.View style={[styles.legendDot, { backgroundColor: COLORS.primary, opacity: fadeAnims.daily }]} />
               <Animated.Text style={[styles.legendText, { opacity: fadeAnims.daily }]}>Daily Check-in</Animated.Text>
@@ -147,7 +216,6 @@ export default function ShowAllStats({ onBack }: { onBack: () => void }) {
               <Animated.View style={[styles.legendDot, { backgroundColor: '#059669', opacity: fadeAnims.workout }]} />
               <Animated.Text style={[styles.legendText, { opacity: fadeAnims.workout }]}>After Workout</Animated.Text>
             </TouchableOpacity>
-          </View>
         </View>
 
         <View style={styles.chartCard}>
@@ -197,15 +265,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   header: {
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
     elevation: 8,
   },
   headerTop: {
@@ -394,10 +461,17 @@ const styles = StyleSheet.create({
   emotionLegend: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 15,
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    backgroundColor: '#fff',
+    
+    marginBottom: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   legendItem: {
     flexDirection: 'row',

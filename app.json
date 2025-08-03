@@ -16,8 +16,15 @@
         "foregroundImage": "./assets/images/wellvantage.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.alpha12121.WELLVANTAGE"
+      "package": "com.alpha12121.WELLVANTAGE",
+      "statusBar": {
+        "backgroundColor": "#ffffff",
+        "barStyle": "dark-content"
+      },
+      "navigationBar": {
+        "visible": "leanback",
+        "behavior": "overlay-swipe"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +40,14 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "position": "relative",
+          "visibility": "visible",
+          "behavior": "overlay-swipe"
         }
       ]
     ],

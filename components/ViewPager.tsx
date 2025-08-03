@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ImageBackground, StyleSheet, TouchableOpacity, View, PanResponder } from 'react-native';
+import { ImageBackground, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 type Page = {
   id: number;
@@ -26,7 +26,7 @@ export default function ViewPager() {
   });
 
   const pages: Page[] = [
-    { id: 1, title: "Gym Equipment", description: "Professional gym equipment for your fitness journey!", color: "#DBEAFE", image: "https://thumbs.dreamstime.com/z/healthy-eating-poster-my-choice-leaving-lifestyle-vegetables-isolated-white-background-circle-composition-fruits-100444923.jpg" },
+    { id: 1, title: "Gym Equipment", description: "Professional gym equipment for your fitness journey!", color: "#DBEAFE", image: "https://harshhospital.in/wp-content/uploads/2022/05/7-1.png" },
     { id: 2, title: "Personal Training", description: "Get fit with our expert trainers and programs.", color: "#DCFCE7", image: "https://thumbs.dreamstime.com/b/gym-cartoon-poster-treadmill-promotional-flyer-promocode-weight-lifting-body-building-personal-training-special-offer-216472462.jpg" },
     { id: 3, title: "Your Only Limit Is You", description: "Push beyond your limits and achieve greatness.", color: "#F3E8FF", image: "https://media.istockphoto.com/id/805211262/vector/your-only-limit-is-you-inspiring-creative-motivation-quote-poster-template-vector-typography.jpg?s=612x612&w=0&k=20&c=tjJ3-XBJoXHxnhLicfL7zmdRv6DEA01V4xr1o06AUz4=" },
   ];
