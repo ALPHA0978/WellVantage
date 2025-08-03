@@ -18,7 +18,7 @@ export const NUTRITION_CONFIG = {
   USE_FREE_DATABASE: false, // Set to true to use free database instead of AI
 };
 
-// Free nutrition database (if you prefer not to use AI)
+// Free nutrition database (if ai fail to response)
 export const COMMON_FOODS = {
   'chicken': { calories: 165, protein: 31, carbs: 0, fat: 3.6 },
   'chicken breast': { calories: 165, protein: 31, carbs: 0, fat: 3.6 },
