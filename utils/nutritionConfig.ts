@@ -1,7 +1,7 @@
 // Configuration for nutrition tracking
 export const NUTRITION_CONFIG = {
   // Replace with your OpenRouter API key from https://openrouter.ai/keys
-  OPENROUTER_API_KEY: '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',
+  OPENROUTER_API_KEY: 'ADD YOUR OPENROUTER API KEY',
   
   // Using free model (try different ones if one fails)
   MODEL: 'google/gemini-flash-1.5',
@@ -18,7 +18,7 @@ export const NUTRITION_CONFIG = {
   USE_FREE_DATABASE: false, // Set to true to use free database instead of AI
 };
 
-// Free nutrition database (if you prefer not to use AI)
+// Free nutrition database (if ai fail to response)
 export const COMMON_FOODS = {
   'chicken': { calories: 165, protein: 31, carbs: 0, fat: 3.6 },
   'chicken breast': { calories: 165, protein: 31, carbs: 0, fat: 3.6 },
