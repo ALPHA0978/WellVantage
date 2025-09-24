@@ -5,44 +5,42 @@ import { ActivityIndicator, Animated, ScrollView, StatusBar, StyleSheet, Text, T
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Index from '../app/index';
 import { ANIMATION_DURATION } from '../utils/constants';
-import ComingSoonDialog from './ComingSoonDialog';
-import MoodHistory from './MoodHistory';
-import Progress from './Progress';
-import ShowAllStats from './ShowAllStats';
+import IssuesList from './IssuesList';
+import IssuesMap from './IssuesMap';
+import ReportIssue from './ReportIssue';
 
 const PROFILE_DATA = {
-  name: "Manish Raj",
-  userId: "ID-192020072589",
+  name: "Civic Reporter",
+  userId: "CR-2024001",
   stats: [
-    { id: 'height', label: 'Height (ft)', value: "5'7''", icon: 'straighten', color: '#FCD34D' },
-    { id: 'weight', label: 'Weight (kg)', value: '70.2', icon: 'monitor-weight', color: '#F9A8D4' },
-    { id: 'bmi', label: 'BMI', value: '24.3', icon: 'favorite', color: '#86EFAC' },
-    { id: 'time', label: 'Total time', value: '2h 30m', icon: 'schedule', color: '#93C5FD' },
-    { id: 'calories', label: 'Burned (cal)', value: '7200', icon: 'local-fire-department', color: '#F9A8D4' },
-    { id: 'workouts', label: 'Done', value: '2', icon: 'fitness-center', color: '#86EFAC' },
+    { id: 'reported', label: 'Issues Reported', value: '12', icon: 'report', color: '#3B82F6' },
+    { id: 'resolved', label: 'Issues Resolved', value: '8', icon: 'check-circle', color: '#10B981' },
+    { id: 'pending', label: 'Pending Issues', value: '4', icon: 'hourglass-empty', color: '#F59E0B' },
+    { id: 'points', label: 'Civic Points', value: '240', icon: 'star', color: '#8B5CF6' },
+    { id: 'rank', label: 'Community Rank', value: '#15', icon: 'trending-up', color: '#EF4444' },
+    { id: 'area', label: 'Area Coverage', value: '2.5km', icon: 'location-on', color: '#06B6D4' },
   ],
   menuItems: [
-    { id: 'bookings', label: 'My Bookings', description: 'Check your past workout reservations & upcoming workouts', icon: 'book', color: '#6366F1' },
-    { id: 'gift', label: 'Gift WELLVANTAGE', description: 'Give the gift of fitness and help them start their fitness journey', icon: 'card-giftcard', color: '#14B8A6' },
-    { id: 'health', label: 'Health Risk Assessment (HRA)', description: 'Your health, lifestyle, and diet preferences', icon: 'favorite', color: '#F43F5E' },
-    { id: 'rewards', label: 'WELLCASH and Rewards', description: 'Balance: 0', icon: 'credit-card', color: '#3B82F6' },
-    { id: 'third-party', label: 'Third-party app connections', description: 'Sync your data with other apps to track your workouts', icon: 'link', color: '#8B5CF6' },
-    { id: 'orders', label: 'My Orders', description: 'Check all your transactions on the WELLVANTAGE and web', icon: 'receipt', color: '#F59E0B' },
-    { id: 'addresses', label: 'My Addresses', description: 'Your delivery addresses for store orders', icon: 'location-on', color: '#10B981' },
+    { id: 'my-reports', label: 'My Reports', description: 'View all issues you have reported and their current status', icon: 'assignment', color: '#3B82F6' },
+    { id: 'nearby-issues', label: 'Nearby Issues', description: 'See civic issues reported in your area', icon: 'location-on', color: '#10B981' },
+    { id: 'civic-points', label: 'Civic Points & Rewards', description: 'Earn points for reporting and get community recognition', icon: 'star', color: '#F59E0B' },
+    { id: 'community', label: 'Community Leaderboard', description: 'See top civic reporters in your area', icon: 'leaderboard', color: '#8B5CF6' },
+    { id: 'notifications', label: 'Issue Updates', description: 'Get notified about status changes on your reports', icon: 'notifications', color: '#EF4444' },
+    { id: 'feedback', label: 'App Feedback', description: 'Help us improve the civic reporting experience', icon: 'feedback', color: '#06B6D4' },
   ],
   settingsItems: [
-    { id: 'personal', label: 'Personal', icon: 'person', color: '#3B82F6' },
-    { id: 'general', label: 'General', icon: 'tune', color: '#6B7280' },
-    { id: 'notification', label: 'Notification', icon: 'notifications', color: '#F97316' },
-    { id: 'help', label: 'Help', icon: 'help', color: '#14B8A6' },
+    { id: 'personal', label: 'Personal Info', icon: 'person', color: '#3B82F6' },
+    { id: 'location', label: 'Location Settings', icon: 'location-on', color: '#10B981' },
+    { id: 'notification', label: 'Notifications', icon: 'notifications', color: '#F59E0B' },
+    { id: 'help', label: 'Help & Support', icon: 'help', color: '#8B5CF6' },
   ]
 };
 
 const NAV_ITEMS = [
-  { id: 'Gym', label: 'Gym', icon: 'fitness-center', iconSet: 'MaterialIcons' },
-  { id: 'Meditation', label: 'Meditation', icon: 'spa', iconSet: 'MaterialIcons' },
+  { id: 'Report', label: 'Report', icon: 'add-circle', iconSet: 'MaterialIcons' },
+  { id: 'Issues', label: 'Issues', icon: 'list', iconSet: 'MaterialIcons' },
   { id: 'Home', label: 'Home', icon: 'home', iconSet: 'Ionicons' },
-  { id: 'Progress', label: 'Progress', icon: 'trending-up', iconSet: 'Ionicons' },
+  { id: 'Map', label: 'Map', icon: 'map', iconSet: 'MaterialIcons' },
   { id: 'Profile', label: 'Profile', icon: 'person', iconSet: 'Ionicons' },
 ];
 
@@ -187,8 +185,7 @@ export default function BottomNavigation() {
   const [activeTab, setActiveTab] = useState('Home');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [showAllStats, setShowAllStats] = useState(false);
-  const [showMoodHistory, setShowMoodHistory] = useState(false);
+  const [showReportIssue, setShowReportIssue] = useState(false);
 
   const handleTabChange = useCallback((tabId: string) => {
     if (activeTab === tabId) return;
@@ -223,46 +220,37 @@ export default function BottomNavigation() {
   }, []);
 
   const handleBackPress = useCallback(() => {
-    if (showMoodHistory) {
-      setShowMoodHistory(false);
-    } else if (showAllStats) {
-      setShowAllStats(false);
+    if (showReportIssue) {
+      setShowReportIssue(false);
     } else {
       setActiveTab('Home');
     }
-  }, [showAllStats, showMoodHistory]);
-
-  const handleShowAllStats = useCallback(() => {
-    setShowAllStats(true);
-  }, []);
-
-  const handleNavigateToHistory = useCallback(() => {
-    setShowMoodHistory(true);
-  }, []);
+  }, [showReportIssue]);
 
   const renderContent = useMemo(() => {
-    if (showMoodHistory) {
-      return <MoodHistory onBack={() => setShowMoodHistory(false)} />;
-    }
-    
-    if (showAllStats) {
-      return <ShowAllStats onBack={() => setShowAllStats(false)} onNavigateToHistory={handleNavigateToHistory} />;
+    if (showReportIssue) {
+      return <ReportIssue onBack={() => {
+        setShowReportIssue(false);
+        setActiveTab('Home');
+      }} />;
     }
     
     switch (activeTab) {
       case 'Home':
-        return <Index onShowAllStats={handleShowAllStats} />;
-      case 'Gym':
-      case 'Meditation':
-        return <ComingSoonDialog />;
-      case 'Progress':
-        return <Progress />;
+        return <Index />;
+      case 'Report':
+        setShowReportIssue(true);
+        return <Index />;
+      case 'Issues':
+        return <IssuesList onBack={() => setActiveTab('Home')} />;
+      case 'Map':
+        return <IssuesMap />;
       case 'Profile':
         return <ProfileContent onBackPress={handleBackPress} />;
       default:
         return <View style={styles.content} />;
     }
-  }, [activeTab, handleBackPress, showAllStats, showMoodHistory, handleShowAllStats, handleNavigateToHistory]);
+  }, [activeTab, handleBackPress, showReportIssue]);
 
   if (isLoading) {
     return (
@@ -273,7 +261,7 @@ export default function BottomNavigation() {
     );
   }
 
-  if (activeTab === 'Profile' || showAllStats || showMoodHistory) {
+  if (activeTab === 'Profile' || showReportIssue) {
     return renderContent;
   }
 

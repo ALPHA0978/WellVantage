@@ -1,50 +1,82 @@
-# Welcome to your Expo app 👋
+# WellVantage - Civic Issue Reporter 🏙️
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native app built with Expo for reporting and tracking civic issues in your community. Help make your city better by reporting problems like potholes, electricity issues, water supply problems, and more.
 
-## Get started
+## Features
 
-1. Install dependencies
+- 📱 **Easy Issue Reporting**: Report civic problems with just a few taps
+- 📍 **Location-Based**: Automatically capture location data for accurate reporting
+- 🏷️ **Categorized Issues**: Organize reports by type (potholes, electricity, water, etc.)
+- 📊 **Real-time Statistics**: View community-wide issue statistics and resolution rates
+- 📋 **Issue Tracking**: Monitor the status of all reported issues
+- 🔥 **Firebase Integration**: Real-time data synchronization with Firestore
+- 🎨 **Modern UI**: Clean, intuitive interface with smooth animations
 
+## Issue Categories
+
+- 🕳️ Potholes
+- ⚡ Electricity Issues
+- 💧 Water Supply Problems
+- 🗑️ Garbage Collection
+- 💡 Street Light Issues
+- 🌊 Drainage Problems
+- 🚦 Traffic Issues
+- 📝 Other Issues
+
+## Setup
+
+1. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
+2. **Configure Firebase**
+   - Update `config/firebase.ts` with your Firebase project credentials
+   - Enable Firestore in your Firebase console
+   - Set up the `issues` collection
 
+3. **Start the app**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Firebase Setup
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+1. Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
+2. Enable Firestore Database
+3. Update the Firebase configuration in `config/firebase.ts`:
+   ```typescript
+   const firebaseConfig = {
+     apiKey: "your-api-key",
+     authDomain: "your-project.firebaseapp.com",
+     projectId: "your-project-id",
+     storageBucket: "your-project.appspot.com",
+     messagingSenderId: "your-sender-id",
+     appId: "your-app-id"
+   };
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## App Structure
 
-## Get a fresh project
+- **Home**: Quick issue reporting and category selection
+- **Report**: Detailed issue reporting form with location capture
+- **Issues**: List view of all reported issues with real-time updates
+- **Statistics**: Community-wide analytics and resolution tracking
+- **Profile**: User profile and civic engagement metrics
 
-When you're ready, run:
+## Technologies Used
 
-```bash
-npm run reset-project
-```
+- **React Native** with Expo
+- **TypeScript** for type safety
+- **Firebase Firestore** for real-time database
+- **Expo Location** for GPS functionality
+- **React Native Reanimated** for smooth animations
+- **Expo Linear Gradient** for modern UI design
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Contributing
 
-## Learn more
+Help improve civic engagement in your community! Feel free to submit issues and enhancement requests.
 
-To learn more about developing your project with Expo, look at the following resources:
+## License
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This project is open source and available under the MIT License.

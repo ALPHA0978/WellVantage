@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "WELLVANTAGE",
-    "slug": "WELLVANTAGE",
+    "name": "WellVantage - Civic Reporter",
+    "slug": "wellvantage-civic",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/wellvantage.png",
+    "icon": "./assets/icon.png",
     "scheme": "wellvantage",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -17,10 +17,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/wellvantage.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.alpha12121.WELLVANTAGE",
+      "package": "com.alpha12121.wellvantage.civic",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
       "statusBar": {
         "backgroundColor": "#ffffff",
         "barStyle": "dark-content"
@@ -31,14 +35,20 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/wellvantage.png"
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
       "expo-router",
       [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app needs access to location to report civic issues with accurate location data."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
-          "image": "./assets/images/wellvantage.png",
+          "image": "./assets/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
